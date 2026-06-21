@@ -9,7 +9,7 @@
     "id": "SD7",
     "name": "Sour Diesel (7 Grams)",
     "price": 70,
-    "inStock": false
+    "inStock": true
   },
   {
     "id": "SD14",
