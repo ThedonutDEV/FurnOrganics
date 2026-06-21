@@ -139,7 +139,7 @@ const productsDiv = document.getElementById("products");
 
 async function loadProducts() {
   try {
-    const response = await fetch("products.json");
+    const response = await fetch("products.json?t=" + Date.now());
 
     if (!response.ok) {
       throw new Error("Could not load products.json");
