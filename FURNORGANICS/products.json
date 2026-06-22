@@ -2,7 +2,7 @@
   "settings": {
     "shippingEnabled": true,
     "shippingMessage": "Shipping orders are handled after your order is received. You will be contacted by email with confirmation, shipping details, and any extra instructions.",
-    "paymentInstructions": "Your order has been received. Do not send payment until your order is reviewed and confirmed. You will receive payment instructions after confirmation."
+    "paymentInstructions": "For payment, send the amount shown on your recipt to $FURNOGANICS on cashapp."
   },
   "products": [
     {
