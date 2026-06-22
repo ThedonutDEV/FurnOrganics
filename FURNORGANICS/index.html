@@ -66,6 +66,33 @@
     #status {
       font-weight: bold;
     }
+
+    .order-box {
+      background: white;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+    }
+
+    .shipping-message {
+      background: #fff7d6;
+      border: 1px solid #d6be5c;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
+    .disabled-shipping {
+      background: #ffe0e0;
+      border: 1px solid #cc7777;
+      padding: 10px;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+    }
   </style>
 </head>
 <body>
@@ -77,9 +104,7 @@
     <img src="company-image.jpg" alt="Company Image">
 
     <textarea rows="6" readonly>
-Furn Organics sells high quality cannabis. We grow and dry all of our products naturally and responsibly. Est. 2025
-
-Disclaimer: Furn Organics sells marijuana that may be illegal in some states or countries. Please exercise cauion while using.
+Idk yet
     </textarea>
   </div>
 
@@ -100,9 +125,34 @@ Disclaimer: Furn Organics sells marijuana that may be illegal in some states or 
 
   <!-- CHECKOUT -->
   <h2>Checkout</h2>
+
+  <div id="orderTypeSection" class="order-box">
+    <p><b>Order Type</b></p>
+
+    <label>
+      <input type="radio" name="orderType" value="pickup" checked>
+      Pickup order
+    </label>
+
+    <div id="shippingOption"></div>
+  </div>
+
+  <div id="shippingDisabledText" class="disabled-shipping" style="display:none;">
+    Shipping orders are not being recieved right now.
+  </div>
+
+  <div id="shippingFields" style="display:none;">
+    <div id="shippingMessage" class="shipping-message"></div>
+
+    <input id="address" placeholder="Street address">
+    <input id="state" placeholder="State">
+    <input id="zip" placeholder="Zip code">
+  </div>
+
   <input id="name" placeholder="Your name">
   <input id="email" placeholder="Your email">
   <input id="note" placeholder="Note (optional)">
+
   <button id="purchase">Purchase</button>
 
   <p id="status"></p>
@@ -129,12 +179,21 @@ emailjs.init(PUBLIC_KEY);
 ======================= */
 
 let PRODUCTS = [];
+let SETTINGS = {
+  shippingEnabled: false,
+  shippingMessage: ""
+};
+
 const cart = [];
 
 const productsDiv = document.getElementById("products");
+const shippingOption = document.getElementById("shippingOption");
+const shippingFields = document.getElementById("shippingFields");
+const shippingMessage = document.getElementById("shippingMessage");
+const shippingDisabledText = document.getElementById("shippingDisabledText");
 
 /* =======================
-   LOAD PRODUCTS FROM GITHUB / JSON
+   LOAD PRODUCTS FROM JSON
 ======================= */
 
 async function loadProducts() {
@@ -145,8 +204,13 @@ async function loadProducts() {
       throw new Error("Could not load products.json");
     }
 
-    PRODUCTS = await response.json();
+    const data = await response.json();
+
+    SETTINGS = data.settings || SETTINGS;
+    PRODUCTS = data.products || [];
+
     renderProducts();
+    renderShippingOptions();
 
   } catch (err) {
     console.error(err);
@@ -181,6 +245,54 @@ function renderProducts() {
 
     productsDiv.appendChild(div);
   });
+}
+
+/* =======================
+   SHIPPING / PICKUP LOGIC
+======================= */
+
+function renderShippingOptions() {
+  shippingOption.innerHTML = "";
+
+  if (SETTINGS.shippingEnabled === true) {
+    shippingDisabledText.style.display = "none";
+
+    shippingOption.innerHTML = `
+      <label>
+        <input type="radio" name="orderType" value="shipping">
+        Shipping order
+      </label>
+    `;
+
+    shippingMessage.textContent = SETTINGS.shippingMessage || 
+      "Shipping orders are handled after your order is received.";
+
+  } else {
+    shippingDisabledText.style.display = "block";
+    shippingFields.style.display = "none";
+  }
+
+  const orderTypeInputs = document.querySelectorAll("input[name='orderType']");
+  orderTypeInputs.forEach(input => {
+    input.addEventListener("change", updateCheckoutFields);
+  });
+
+  updateCheckoutFields();
+}
+
+function getOrderType() {
+  const selected = document.querySelector("input[name='orderType']:checked");
+  return selected ? selected.value : "pickup";
+}
+
+function updateCheckoutFields() {
+  const orderType = getOrderType();
+
+  if (orderType === "shipping" && SETTINGS.shippingEnabled === true) {
+    shippingFields.style.display = "block";
+  } else {
+    shippingFields.style.display = "none";
+  }
 }
 
 /* =======================
@@ -260,9 +372,27 @@ document.getElementById("purchase").onclick = async () => {
   const email = document.getElementById("email").value.trim();
   const note = document.getElementById("note").value.trim();
 
+  const orderType = getOrderType();
+
+  const address = document.getElementById("address").value.trim();
+  const state = document.getElementById("state").value.trim();
+  const zip = document.getElementById("zip").value.trim();
+
   if (!name || !email) {
     status.textContent = "Name and email required.";
     return;
+  }
+
+  if (orderType === "shipping") {
+    if (SETTINGS.shippingEnabled !== true) {
+      status.textContent = "Shipping orders are not being recieved right now.";
+      return;
+    }
+
+    if (!address || !state || !zip) {
+      status.textContent = "Address, state, and zip code are required for shipping.";
+      return;
+    }
   }
 
   const orderItems = cart
@@ -275,6 +405,10 @@ document.getElementById("purchase").onclick = async () => {
 
   const orderId = crypto.randomUUID().slice(0, 8).toUpperCase();
 
+  const shippingAddress = orderType === "shipping"
+    ? `${address}, ${state} ${zip}`
+    : "N/A - Pickup order";
+
   try {
     await emailjs.send(SERVICE_ID, TEMPLATE_ID, {
       order_id: orderId,
@@ -282,7 +416,13 @@ document.getElementById("purchase").onclick = async () => {
       customer_email: email,
       order_items: orderItems,
       order_total: total,
-      note: note || "(none)"
+      note: note || "(none)",
+
+      order_type: orderType,
+      shipping_address: shippingAddress,
+      shipping_state: orderType === "shipping" ? state : "N/A",
+      shipping_zip: orderType === "shipping" ? zip : "N/A",
+      shipping_message: orderType === "shipping" ? SETTINGS.shippingMessage : "N/A"
     });
 
     status.textContent = "Order sent successfully!";
@@ -293,6 +433,12 @@ document.getElementById("purchase").onclick = async () => {
     document.getElementById("name").value = "";
     document.getElementById("email").value = "";
     document.getElementById("note").value = "";
+    document.getElementById("address").value = "";
+    document.getElementById("state").value = "";
+    document.getElementById("zip").value = "";
+
+    document.querySelector("input[name='orderType'][value='pickup']").checked = true;
+    updateCheckoutFields();
 
   } catch (err) {
     console.error(err);
