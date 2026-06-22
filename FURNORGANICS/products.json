@@ -1,7 +1,8 @@
 {
   "settings": {
     "shippingEnabled": true,
-    "shippingMessage": "Please cashapp the requested amount to $FURNOGANICS. Note: Please include your order "
+    "shippingMessage": "Shipping orders are handled after your order is received. You will be contacted by email with confirmation, shipping details, and any extra instructions.",
+    "paymentInstructions": "Your order has been received. Do not send payment until your order is reviewed and confirmed. You will receive payment instructions after confirmation."
   },
   "products": [
     {
