@@ -1,3 +1,4 @@
+```html
 <!doctype html>
 <html lang="en">
 <head>
@@ -81,6 +82,13 @@
       margin-bottom: 10px;
     }
 
+    .payment-message {
+      background: #e7f0ff;
+      border: 1px solid #7799cc;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+
     .disabled-shipping {
       background: #ffe0e0;
       border: 1px solid #cc7777;
@@ -92,6 +100,11 @@
     label {
       display: block;
       margin-bottom: 8px;
+    }
+
+    .radio-input {
+      width: auto;
+      margin-right: 6px;
     }
   </style>
 </head>
@@ -130,7 +143,7 @@ Idk yet
     <p><b>Order Type</b></p>
 
     <label>
-      <input type="radio" name="orderType" value="pickup" checked>
+      <input class="radio-input" type="radio" name="orderType" value="pickup" checked>
       Pickup order
     </label>
 
@@ -143,6 +156,7 @@ Idk yet
 
   <div id="shippingFields" style="display:none;">
     <div id="shippingMessage" class="shipping-message"></div>
+    <div id="paymentMessage" class="payment-message"></div>
 
     <input id="address" placeholder="Street address">
     <input id="state" placeholder="State">
@@ -170,7 +184,12 @@ Idk yet
 
 const PUBLIC_KEY = "dMY8Wq6ssR3M5I1go";
 const SERVICE_ID = "service_zaglobv";
-const TEMPLATE_ID = "template_93vjopg";
+
+// Email sent to you
+const OWNER_TEMPLATE_ID = "template_93vjopg";
+
+// Email receipt sent to customer
+const CUSTOMER_TEMPLATE_ID = "template_id6n2nd";
 
 emailjs.init(PUBLIC_KEY);
 
@@ -179,9 +198,11 @@ emailjs.init(PUBLIC_KEY);
 ======================= */
 
 let PRODUCTS = [];
+
 let SETTINGS = {
   shippingEnabled: false,
-  shippingMessage: ""
+  shippingMessage: "Shipping orders are handled after your order is received. You will be contacted by email with confirmation and details.",
+  paymentInstructions: "Your order has been received. Do not send payment until your order is reviewed and confirmed. You will receive payment instructions after confirmation."
 };
 
 const cart = [];
@@ -190,7 +211,16 @@ const productsDiv = document.getElementById("products");
 const shippingOption = document.getElementById("shippingOption");
 const shippingFields = document.getElementById("shippingFields");
 const shippingMessage = document.getElementById("shippingMessage");
+const paymentMessage = document.getElementById("paymentMessage");
 const shippingDisabledText = document.getElementById("shippingDisabledText");
+
+/* =======================
+   SMALL DELAY FOR EMAILJS
+======================= */
+
+function wait(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 /* =======================
    LOAD PRODUCTS FROM JSON
@@ -206,8 +236,21 @@ async function loadProducts() {
 
     const data = await response.json();
 
-    SETTINGS = data.settings || SETTINGS;
-    PRODUCTS = data.products || [];
+    // Supports old JSON format:
+    // [ { product }, { product } ]
+    if (Array.isArray(data)) {
+      PRODUCTS = data;
+    } 
+    // Supports new JSON format:
+    // { settings: {...}, products: [...] }
+    else {
+      SETTINGS = {
+        ...SETTINGS,
+        ...(data.settings || {})
+      };
+
+      PRODUCTS = data.products || [];
+    }
 
     renderProducts();
     renderShippingOptions();
@@ -259,13 +302,13 @@ function renderShippingOptions() {
 
     shippingOption.innerHTML = `
       <label>
-        <input type="radio" name="orderType" value="shipping">
+        <input class="radio-input" type="radio" name="orderType" value="shipping">
         Shipping order
       </label>
     `;
 
-    shippingMessage.textContent = SETTINGS.shippingMessage || 
-      "Shipping orders are handled after your order is received.";
+    shippingMessage.textContent = SETTINGS.shippingMessage;
+    paymentMessage.textContent = SETTINGS.paymentInstructions;
 
   } else {
     shippingDisabledText.style.display = "block";
@@ -273,6 +316,7 @@ function renderShippingOptions() {
   }
 
   const orderTypeInputs = document.querySelectorAll("input[name='orderType']");
+
   orderTypeInputs.forEach(input => {
     input.addEventListener("change", updateCheckoutFields);
   });
@@ -356,7 +400,7 @@ function renderCart() {
 }
 
 /* =======================
-   PURCHASE → SEND EMAIL
+   PURCHASE → SEND EMAILS
 ======================= */
 
 document.getElementById("purchase").onclick = async () => {
@@ -409,23 +453,39 @@ document.getElementById("purchase").onclick = async () => {
     ? `${address}, ${state} ${zip}`
     : "N/A - Pickup order";
 
+  const paymentInstructions = orderType === "shipping"
+    ? SETTINGS.paymentInstructions
+    : "N/A - Pickup order";
+
+  const sharedParams = {
+    order_id: orderId,
+    customer_name: name,
+    customer_email: email,
+    order_items: orderItems,
+    order_total: total,
+    note: note || "(none)",
+
+    order_type: orderType,
+    shipping_address: shippingAddress,
+    shipping_state: orderType === "shipping" ? state : "N/A",
+    shipping_zip: orderType === "shipping" ? zip : "N/A",
+    shipping_message: orderType === "shipping" ? SETTINGS.shippingMessage : "N/A",
+    payment_instructions: paymentInstructions
+  };
+
   try {
-    await emailjs.send(SERVICE_ID, TEMPLATE_ID, {
-      order_id: orderId,
-      customer_name: name,
-      customer_email: email,
-      order_items: orderItems,
-      order_total: total,
-      note: note || "(none)",
+    status.textContent = "Sending order...";
 
-      order_type: orderType,
-      shipping_address: shippingAddress,
-      shipping_state: orderType === "shipping" ? state : "N/A",
-      shipping_zip: orderType === "shipping" ? zip : "N/A",
-      shipping_message: orderType === "shipping" ? SETTINGS.shippingMessage : "N/A"
-    });
+    // Sends order email to you.
+    await emailjs.send(SERVICE_ID, OWNER_TEMPLATE_ID, sharedParams);
 
-    status.textContent = "Order sent successfully!";
+    // Wait so EmailJS does not block the second email.
+    await wait(1200);
+
+    // Sends receipt email to customer.
+    await emailjs.send(SERVICE_ID, CUSTOMER_TEMPLATE_ID, sharedParams);
+
+    status.textContent = "Order sent successfully! A receipt was sent to your email.";
 
     cart.length = 0;
     renderCart();
@@ -455,3 +515,4 @@ loadProducts();
 
 </body>
 </html>
+```
