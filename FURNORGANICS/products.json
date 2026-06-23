@@ -1,31 +1,31 @@
 {
   "settings": {
-    "shippingEnabled": true,
+    "shippingEnabled": false,
     "shippingMessage": "Shipping orders are handled after your order is received. You will be contacted by email with confirmation, shipping details, and any extra instructions.",
     "paymentInstructions": "For payment, send the amount shown on your recipt to $FURNOGANICS on cashapp."
   },
   "products": [
     {
       "id": "SD35",
-      "name": "PlaceHolder4",
+      "name": "Sour Diesel (3.5 Grams)",
       "price": 40,
       "inStock": true
     },
     {
       "id": "SD7",
-      "name": "PlaceHolder3",
+      "name": "Sour Diesel (7 Grams)",
       "price": 70,
       "inStock": true
     },
     {
       "id": "SD14",
-      "name": "PlaceHolder2",
+      "name": "Sour Diesel (14 Grams)",
       "price": 120,
       "inStock": true
     },
     {
       "id": "SD28",
-      "name": "PlaceHolder1",
+      "name": "Sour Diesel (1 Ounce)",
       "price": 200,
       "inStock": true
     }
