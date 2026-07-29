@@ -1,0 +1,16 @@
+{
+  "codes": [
+    {
+      "code": "FURN-1234",
+      "status": "Authentic",
+      "product": "PlaceHolder4",
+      "message": "This code is authentic."
+    },
+    {
+      "code": "FURN-5678",
+      "status": "Authentic",
+      "product": "PlaceHolder3",
+      "message": "This code is authentic."
+    }
+  ]
+}
