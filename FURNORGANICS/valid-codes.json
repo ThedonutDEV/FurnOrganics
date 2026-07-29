@@ -1,16 +1,16 @@
 {
   "codes": [
     {
-      "code": "FURN-1234",
+      "code": "B8FIAR",
       "status": "Authentic",
-      "product": "PlaceHolder4",
-      "message": "This code is authentic."
+      "product": "DMT Vape 2Mg",
+      "message": "This product is authentic."
     },
     {
-      "code": "FURN-5678",
+      "code": "F9P54M",
       "status": "Authentic",
-      "product": "PlaceHolder3",
-      "message": "This code is authentic."
+      "product": "DMT Vape 2Mg",
+      "message": "This product is authentic."
     }
   ]
 }
