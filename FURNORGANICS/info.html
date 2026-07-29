@@ -1,5 +1,4 @@
 <!doctype html>
-
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -7,86 +6,134 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial, sans-serif;
-      background: white;
+      background: #f7f7f7;
       margin: 0;
-      padding: 40px 0;
+      padding: 35px 0;
       display: flex;
       justify-content: center;
+      color: #111;
     }
 
     .container {
-      width: 700px;
-      background: #f0f0f0;
-      padding: 20px;
-      box-sizing: border-box;
+      width: 760px;
+      background: #eeeeee;
+      padding: 22px;
+      border: 1px solid #d0d0d0;
     }
 
     .nav-buttons {
       display: flex;
       gap: 10px;
       justify-content: flex-end;
-      margin-bottom: 15px;
+      margin-bottom: 18px;
     }
 
     .nav-buttons a {
-      background: white;
-      color: black;
-      border: 1px solid #999;
-      padding: 8px 12px;
       text-decoration: none;
-      font-weight: bold;
-      font-size: 14px;
     }
 
-    .nav-buttons a:hover {
-      background: #e0e0e0;
+    .nav-buttons button {
+      padding: 7px 13px;
+      cursor: pointer;
+      background: #ffffff;
+      color: #111;
+      border: 1px solid #999;
+      font: inherit;
+      font-weight: bold;
+    }
+
+    .nav-buttons button:hover {
+      background: #e6e6e6;
     }
 
     .box {
       background: white;
-      padding: 15px;
       border: 1px solid #ccc;
-      margin-bottom: 10px;
+      padding: 18px;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    h1 {
+      margin-top: 0;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+
+    .footer {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #333;
+    }
+
+    @media (max-width: 800px) {
+      body {
+        padding: 0;
+      }
+
+      .container {
+        width: 100%;
+        min-height: 100vh;
+      }
+
+      .nav-buttons {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
     }
   </style>
-
 </head>
 <body>
 
 <div class="container">
 
   <div class="nav-buttons">
-    <a href="index.html">Shop</a>
-    <a href="verify.html">Verify Product</a>
-    <a href="about.html">About</a>
+    <a href="index.html"><button type="button">Shop</button></a>
+    <a href="verify.html"><button type="button">Verify Product</button></a>
+    <a href="about.html"><button type="button">About</button></a>
   </div>
 
-  <h1>Order Info</h1>
+  <div class="box">
+    <h1>Order Info</h1>
+    <p>
+      This page explains how pickup, shipping, receipts, and verification work.
+    </p>
+  </div>
 
   <div class="box">
-    <h3>Pickup Orders</h3>
+    <h2>Pickup Orders</h2>
     <p>
       Pickup orders use the basic checkout form. After submitting an order,
-      you will receive a receipt with your order ID.
+      the customer receives a receipt email with the order ID.
     </p>
   </div>
 
   <div class="box">
-    <h3>Shipping Orders</h3>
+    <h2>Shipping Orders</h2>
     <p>
-      Shipping orders require an address, state, and zip code. After submitting,
-      your order will be reviewed and you will receive instructions by email.
+      Shipping orders require a street address, state, and zip code. After
+      submitting, the order is reviewed and instructions are sent by email.
     </p>
   </div>
 
   <div class="box">
-    <h3>Product Verification</h3>
+    <h2>Product Verification</h2>
     <p>
-      Use the Verify Product page to enter a code and check if it is authentic.
+      Use the Verify Product page to enter a code and check if it matches the
+      valid-codes.json file.
     </p>
   </div>
+
+  <p class="footer">Powered by Furn</p>
 
 </div>
 
