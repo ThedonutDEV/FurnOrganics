@@ -1,4 +1,5 @@
 <!doctype html>
+
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -20,6 +21,17 @@
       background: #f0f0f0;
       padding: 20px;
       box-sizing: border-box;
+    }
+
+    .top-links {
+      margin-bottom: 15px;
+      text-align: right;
+    }
+
+    .top-links a {
+      color: #000;
+      text-decoration: underline;
+      font-weight: bold;
     }
 
     .header {
@@ -105,30 +117,50 @@
       width: auto;
       margin-right: 6px;
     }
+
+    .footer-links {
+      margin-top: 15px;
+    }
+
+    .footer-links a {
+      color: #000;
+      text-decoration: underline;
+    }
   </style>
+
 </head>
 <body>
 
 <div class="container">
 
+  <div class="top-links">
+    <a href="verify.html">Verify Product</a>
+  </div>
+
   <!-- IMAGE + COMPANY DESCRIPTION -->
+
   <div class="header">
     <img src="company-image.jpg" alt="Company Image">
 
-    <textarea rows="6" readonly>
-placeholder
-    </textarea>
+```
+<textarea rows="6" readonly>
+```
+
+placeholder </textarea>
+
   </div>
 
   <hr>
 
   <!-- PRODUCTS -->
+
   <h2>Whatever</h2>
   <div id="products">Loading products...</div>
 
   <hr>
 
   <!-- CART -->
+
   <h2>Cart</h2>
   <div id="cart">Cart is empty</div>
   <p><b>Total:</b> $<span id="total">0.00</span></p>
@@ -136,17 +168,21 @@ placeholder
   <hr>
 
   <!-- CHECKOUT -->
+
   <h2>Checkout</h2>
 
   <div id="orderTypeSection" class="order-box">
     <p><b>Order Type</b></p>
 
-    <label>
-      <input class="radio-input" type="radio" name="orderType" value="pickup" checked>
-      Pickup order
-    </label>
+```
+<label>
+  <input class="radio-input" type="radio" name="orderType" value="pickup" checked>
+  Pickup order
+</label>
 
-    <div id="shippingOption"></div>
+<div id="shippingOption"></div>
+```
+
   </div>
 
   <div id="shippingDisabledText" class="disabled-shipping" style="display:none;">
@@ -157,23 +193,32 @@ placeholder
     <div id="shippingMessage" class="shipping-message"></div>
     <div id="paymentMessage" class="payment-message"></div>
 
-    <input id="address" placeholder="Street address">
-    <input id="state" placeholder="State">
-    <input id="zip" placeholder="Zip code">
+```
+<input id="address" placeholder="Street address">
+<input id="state" placeholder="State">
+<input id="zip" placeholder="Zip code">
+```
+
   </div>
 
   <input id="name" placeholder="Your name">
   <input id="email" placeholder="Your email">
   <input id="note" placeholder="Note (optional)">
 
-  <button id="purchase">Purchase</button>
+<button id="purchase">Purchase</button>
 
   <p id="status"></p>
+
+  <div class="footer-links">
+    <a href="verify.html">Verify Product</a>
+  </div>
+
   <p>Powered by Furn</p>
 
 </div>
 
 <!-- EmailJS -->
+
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
 <script>
@@ -201,7 +246,7 @@ let PRODUCTS = [];
 let SETTINGS = {
   shippingEnabled: false,
   shippingMessage: "Shipping orders are handled after your order is received. You will be contacted by email with confirmation and details.",
-  paymentInstructions: "Your order has been received. Do not send payment until your order is reviewed and confirmed. You will receive payment instructions after confirmation."
+  paymentInstructions: "For shipping orders, submit your order first. After your order is reviewed, you will receive confirmation and payment instructions by email."
 };
 
 const cart = [];
@@ -514,4 +559,3 @@ loadProducts();
 
 </body>
 </html>
-```
