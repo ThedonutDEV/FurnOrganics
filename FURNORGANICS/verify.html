@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Verify Product - Furn Organics</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: white;
+      margin: 0;
+      padding: 40px 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 700px;
+      background: #f0f0f0;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+      padding: 8px;
+    }
+
+    button {
+      padding: 8px 14px;
+      cursor: pointer;
+    }
+
+    .result {
+      margin-top: 15px;
+      padding: 12px;
+      border: 1px solid #ccc;
+      background: white;
+      font-weight: bold;
+    }
+
+    .authentic {
+      background: #e0ffe0;
+      border-color: #66aa66;
+      color: #145c14;
+    }
+
+    .invalid {
+      background: #ffe0e0;
+      border-color: #cc7777;
+      color: #8a1111;
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Verify Product</h1>
+
+  <p>Enter your verification code below.</p>
+
+  <input id="codeInput" placeholder="Enter code">
+  <button onclick="verifyCode()">Verify</button>
+
+  <div id="result" class="result" style="display:none;"></div>
+
+  <a href="index.html">Back to shop</a>
+</div>
+
+<script>
+let VALID_CODES = [];
+
+async function loadCodes() {
+  try {
+    const response = await fetch("valid-codes.json?t=" + Date.now());
+
+    if (!response.ok) {
+      throw new Error("Could not load valid-codes.json");
+    }
+
+    const data = await response.json();
+    VALID_CODES = data.codes || [];
+
+  } catch (err) {
+    console.error(err);
+
+    const result = document.getElementById("result");
+    result.style.display = "block";
+    result.className = "result invalid";
+    result.textContent = "Verification system is unavailable right now.";
+  }
+}
+
+function verifyCode() {
+  const input = document.getElementById("codeInput").value.trim().toUpperCase();
+  const result = document.getElementById("result");
+
+  if (!input) {
+    result.style.display = "block";
+    result.className = "result invalid";
+    result.textContent = "Please enter a code.";
+    return;
+  }
+
+  const match = VALID_CODES.find(item => item.code.toUpperCase() === input);
+
+  if (match) {
+    result.style.display = "block";
+    result.className = "result authentic";
+    result.innerHTML = `
+      Authentic<br><br>
+      Product: ${match.product}<br>
+      Message: ${match.message}
+    `;
+  } else {
+    result.style.display = "block";
+    result.className = "result invalid";
+    result.textContent = "Invalid code. This code was not found.";
+  }
+}
+
+loadCodes();
+</script>
+
+</body>
+</html>
