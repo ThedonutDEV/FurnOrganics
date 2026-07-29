@@ -1,5 +1,4 @@
 <!doctype html>
-
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -7,81 +6,123 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial, sans-serif;
-      background: white;
+      background: #f7f7f7;
       margin: 0;
-      padding: 40px 0;
+      padding: 35px 0;
       display: flex;
       justify-content: center;
+      color: #111;
     }
 
     .container {
-      width: 700px;
-      background: #f0f0f0;
-      padding: 20px;
-      box-sizing: border-box;
+      width: 760px;
+      background: #eeeeee;
+      padding: 22px;
+      border: 1px solid #d0d0d0;
     }
 
     .nav-buttons {
       display: flex;
       gap: 10px;
       justify-content: flex-end;
-      margin-bottom: 15px;
+      margin-bottom: 18px;
     }
 
     .nav-buttons a {
-      background: white;
-      color: black;
-      border: 1px solid #999;
-      padding: 8px 12px;
       text-decoration: none;
-      font-weight: bold;
-      font-size: 14px;
     }
 
-    .nav-buttons a:hover {
-      background: #e0e0e0;
+    .nav-buttons button {
+      padding: 7px 13px;
+      cursor: pointer;
+      background: #ffffff;
+      color: #111;
+      border: 1px solid #999;
+      font: inherit;
+      font-weight: bold;
+    }
+
+    .nav-buttons button:hover {
+      background: #e6e6e6;
     }
 
     .box {
       background: white;
-      padding: 15px;
       border: 1px solid #ccc;
+      padding: 18px;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    h1 {
+      margin-top: 0;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    .footer {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #333;
+    }
+
+    @media (max-width: 800px) {
+      body {
+        padding: 0;
+      }
+
+      .container {
+        width: 100%;
+        min-height: 100vh;
+      }
+
+      .nav-buttons {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+      }
     }
   </style>
-
 </head>
 <body>
 
 <div class="container">
 
   <div class="nav-buttons">
-    <a href="index.html">Shop</a>
-    <a href="verify.html">Verify Product</a>
-    <a href="info.html">Info</a>
+    <a href="index.html"><button type="button">Shop</button></a>
+    <a href="verify.html"><button type="button">Verify Product</button></a>
+    <a href="info.html"><button type="button">Info</button></a>
   </div>
-
-  <h1>About Furn Organics</h1>
 
   <div class="box">
+    <h1>About Furn Organics</h1>
     <p>
-      Furn Organics is a simple online ordering page built for easy product updates,
+      Furn Organics is a simple online shop system with product updates,
       order receipts, and product verification.
     </p>
-
-```
-<p>
-  Products can be updated through GitHub using the products.json file.
-  Verification codes can be updated through the valid-codes.json file.
-</p>
-
-<p>
-  Replace this text with your real company description later.
-</p>
-```
-
+    <p>
+      Products can be updated through the products.json file, and verification
+      codes can be updated through the valid-codes.json file.
+    </p>
   </div>
+
+  <div class="box">
+    <h2>What We Do</h2>
+    <p>
+      This page is a placeholder for your real brand description. You can write
+      about your products, quality, process, pickup information, or anything
+      else you want customers to know.
+    </p>
+  </div>
+
+  <p class="footer">Powered by Furn</p>
 
 </div>
 
